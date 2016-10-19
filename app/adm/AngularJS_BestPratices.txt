@@ -1,0 +1,660 @@
+Introdução (https://github.com/mgechev/angularjs-style-guide/blob/master/README-pt-br.md) ou (https://scotch.io/tutorials/angularjs-best-practices-directory-structure)
+
+O objetivo deste guia é apresentar um conjunto de boas práticas e diretrizes para uma aplicação AngularJS. Essas boas práticas são baseadas em:
+
+Código fonte do AngularJS
+Códigos fonte ou artigos que li
+Própria experiência
+Nota 1: Este guia ainda é um rascunho, seu objetivo principal é ser construído pela comunidade, então ao contribuir você será muito apreciado por toda ela.
+
+Nota 2: Antes de seguir qualquer das diretrizes nas traduções do documento original, verifique se a mesma está atualizada.
+
+Neste guia você não irá encontrar diretrizes para desenvolvimento JavaScript. O que pode ser encontrado em:
+
+Guia JavaScript - Google
+Guia JavaScript - Mozilla
+Guia JavaScript - Douglas Crockford
+Guia Javascript - Airbnb
+Guia Javascript - Idiomatic
+Para o desenvolvimento usando o AngularJS é recomendado o Guia JavaScript Google.
+
+Na wiki do AngularJS no Github tem uma seção similar feita pelo ProLoser, você pode vê-la aqui.
+
+
+Geral
+Estrutura de Diretório
+Markup
+Convenções de nomenclatura
+Outros
+Módulos
+Controladores
+Diretivas
+Filtros
+Serviços
+Templates
+Roteamento
+E2E Testing
+i18n
+Performance
+Contribuições
+Contribuidores
+
+
+*Geral
+
+Estrutura de Diretório
+
+Uma vez que uma grande aplicação AngularJS tem muitos componentes, é melhor estruturá-la em uma hierarquia de diretórios. Há duas abordagens:
+
+Criando uma divisão alto nível por tipos de componentes e uma divisão baixo nível por funcionalidade.
+Desta maneira a estrutura do diretório irá se parecer com:
+
+.
+├── app
+│   ├── app.js
+│   ├── controllers
+│   │   ├── home
+│   │   │   ├── FirstCtrl.js
+│   │   │   └── FirstCtrl.spec.js
+│   │   │   └── SecondCtrl.js
+│   │   │   └── SecondCtrl.spec.js
+│   │   └── about
+│   │       └── ThirdCtrl.js
+│   │       └── ThirdCtrl.spec.js
+│   ├── directives
+│   │   ├── home
+│   │   │   └── directive1.js
+│   │   │   └── directive1.spec.js
+│   │   └── about
+│   │       ├── directive2.js
+│   │       ├── directive2.spec.js
+│   │       └── directive3.js
+│   │       └── directive3.spec.js
+│   ├── filters
+│   │   ├── home
+│   │   └── about
+│   └── services
+│       ├── CommonService.js
+│       ├── CommonService.spec.js
+│       ├── cache
+│       │   ├── Cache1.js
+│       │   ├── Cache1.spec.js
+│       │   └── Cache2.js
+│       │   └── Cache2.spec.js
+│       └── models
+│           ├── Model1.spec.js
+│           ├── Model1.js
+│           └── Model2.spec.js
+│           └── Model2.js
+├── partials
+├── lib
+└── e2e-tests
+Criando uma divisão alto nível por funcionalidade e baixo nível por tipos de componentes.
+Abaixo o modelo:
+
+.
+├── app
+│   ├── app.js
+│   ├── common
+│   │   ├── controllers
+│   │   ├── directives
+│   │   ├── filters
+│   │   └── services
+│   ├── home
+│   │   ├── controllers
+│   │   │   ├── FirstCtrl.js
+│   │   │   ├── FirstCtrl.spec.js
+│   │   │   └── SecondCtrl.js
+│   │   │   └── SecondCtrl.spec.js
+│   │   ├── directives
+│   │   │   └── directive1.js
+│   │   │   └── directive1.spec.js
+│   │   ├── filters
+│   │   │   ├── filter1.js
+│   │   │   ├── filter1.spec.js
+│   │   │   └── filter2.js
+│   │   │   └── filter2.spec.js
+│   │   └── services
+│   │       ├── service1.js
+│   │       ├── service1.spec.js
+│   │       └── service2.js
+│   │       └── service2.spec.js
+│   └── about
+│       ├── controllers
+│       │   └── ThirdCtrl.js
+│       │   └── ThirdCtrl.spec.js
+│       ├── directives
+│       │   ├── directive2.js
+│       │   ├── directive2.spec.js
+│       │   └── directive3.js
+│       │   └── directive3.spec.js
+│       ├── filters
+│       │   └── filter3.js
+│       │   └── filter3.spec.js
+│       └── services
+│           └── service3.js
+│           └── service3.spec.js
+├── partials
+├── lib
+└── e2e-tests
+Caso o nome do diretório tenha várias palavras, use a sintaxe lisp:
+app
+ ├── app.js
+ └── my-complex-module
+     ├── controllers
+     ├── directives
+     ├── filters
+     └── services
+Coloque todos os arquivos associados com a diretiva (ex: templates, arquivos CSS/SASS, JavaScript) em uma única pasta. Se você optar por usar este estilo consistente, faça o mesmo uso em todos os lugares do seu projeto.
+app
+└── directives
+    ├── directive1
+    │   ├── directive1.html
+    │   ├── directive1.js
+    │   ├── directive1.spec.js
+    │   └── directive1.sass
+    └── directive2
+        ├── directive2.html
+        ├── directive2.js
+        ├── directive2.spec.js
+        └── directive2.sass
+Esta abordagem pode ser combinada com ambas as estruturas de diretórios acima.
+
+Os testes unitários para um determinado componente (*.spec.js) deve estar localizado no diretório do componente. Dessa forma, quando você faz alterações em um determinado componente será fácil encontrar encontrando seu teste. Os testes também atuam como documentação e casos de uso.
+services
+├── cache
+│   ├── cache1.js
+│   └── cache1.spec.js
+└── models
+    ├── model1.js
+    └── model1.spec.js
+O arquivo app.js contém definição de rotas, configurações e/ou inicializações manuais (se necessário).
+Cada arquivo JavaScript deve conter apenas um componente. O arquivo deve ser nomeado com o nome do componente.
+Use as estruturas do projeto AngularJS como Yeoman, ng-boilerplate.
+Convenções sobre nomenclaturas de componentes podem ser encontradas em cada seção do componente.
+
+Markup
+
+TLDR; Coloque os scripts na parte inferior do documento.
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>MyApp</title>
+</head>
+<body>
+  <div ng-app="myApp">
+    <div ng-view></div>
+  </div>
+  <script src="angular.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
+Mantenha as coisas simples e coloque as diretivas específicas do AngularJS após atributos padrões. Isto tornará mais fácil avaliar seu código e irá torná-lo mais fácil de manter, porque seus atributos são consistentemente agrupados e posicionados.
+
+<form class="frm" ng-submit="login.authenticate()">
+  <div>
+    <input class="ipt" type="text" placeholder="name" require ng-model="user.name">
+  </div>
+</form>
+Outros atributos HTML devem seguir o Code Guide's recomendação
+
+Convenções de nomenclatura
+
+A tabela a seguir mostra as convenções de nomenclatura para cada elemento:
+
+Elemento	Nomenclatura	Exemplo	Uso
+Modules	lowerCamelCase	angularApp	
+Controllers	Funcionalidade + 'Ctrl'	AdminCtrl	
+Directives	lowerCamelCase	userInfo	
+Filters	lowerCamelCase	userFilter	
+Services	UpperCamelCase	User	constructor
+Factories	lowerCamelCase	dataFactory	others
+Outros
+
+Use:
+$timeout ao invés de setTimeout
+$interval ao invés de setInterval
+$window ao invés de window
+$document ao invés de document
+$http ao invés de $.ajax
+$location ao invés de window.location ou $window.location
+$cookies ao invés de document.cookie
+Seus testes serão mais fáceis e em alguns casos irá prevenir comportamentos inesperados (por exemplo, se você perder $scope.$apply em setTimeout).
+
+Automatize seu fluxo de trabalho utilizando ferramentas como:
+
+NPM
+Grunt
+Gulp
+Yeoman
+Bower
+Use ($q) ao invés de callbacks. Isso tornará seu código mais elegante e limpo, e o salvará do inferno de callbacks.
+
+Use $resource ao invés de $http quando possível. Um alto nível de abstração irá lhe salvar de redundância.
+Use um pré-minificador AngularJS (como ngmin ou ng-annotate) para prevenir problemas depois da minificação.
+Não use globals. Resolva todas as dependências usando Injeção de Depedências, isso impedirá erros e monkey patching ao testar.
+Evite globals usando Grunt/Gulp para amarrar seu código em Immediately Invoked Function Expression (IIFE). Você pode usar plugins como grunt-wrap ou gulp-wrap para esta finalidade . Exemplo (usando Gulp):
+
+gulp.src("./src/*.js")
+    .pipe(wrap('(function(){\n"use strict";\n<%= contents %>\n})();'))
+    .pipe(gulp.dest("./dist"));
+Não polua seu $scope. Somente adicione funções e variáveis que irão ser usadas nos templates.
+Prefira o uso de controllers ao invés de ngInit. Existem apenas alguns usos apropriados de ngInit, como por exemplo aliasing para propriedades especiais de ngRepeat, e para a injeção de dados através de scripts do lado do servidor. Além desses poucos casos, você deve usar os controladores em vez de ngInit para inicializar valores em um escopo. A expressão passada para ngInit deve ser através de lexing, análise e avaliação por parte do interpretador implementado dentro do serviço do $parse. Isto leva a:
+Impacto no desempenho, porque o interpretador é implementado em JavaScript.
+O armazenamento em cache das expressões analisadas ​​dentro do serviço do $parse não faz muito sentido na maioria dos casos, uma vez que as expressões ngInit muitas vezes são avaliados apenas uma vez.
+É propenso a erros, uma vez que você está escrevendo strings dentro de seus templates, não há destaque de sintaxe e um maior suporte por parte do seu editor
+Erros em tempo de execução não são gerados.
+Não use o prefixo $ para os nomes de variáveis, propriedades e métodos. Este prefixo é reservado para uso AngularJS.
+Não use JQUERY dentro de sua aplicação, se for preciso, usar JQLite ao invés de angular.element.
+Quando resolver dependências através do mecanismo de DI no AngularJS, classificar as dependências de seu tipo - o built-in AngularJS dependências deve ser o primeiro, seguido por seus entes personalizados:
+module.factory('Service', function ($rootScope, $timeout, MyCustomDependency1, MyCustomDependency2) {
+  return {
+    //Something
+  };
+});
+Módulos
+
+Módulos devem ser nomeados com lowerCamelCase. Para indicar que o módulo B é sub-módulo de a, você pode aninhar-los usando namespacing como: a.b.
+
+Há duas maneiras comuns para a estruturação de módulos:
+
+Por funcionalidade
+Por tipo de componente
+Atualmente não há uma grande diferença, mas a primeira maneira parece ser mais clara. Além disso, se os módulos lazy-loading for implementado (atualmente não há suporte no Angular JS), ele irá melhorar o desempenho do aplicativo.
+
+Controladores
+
+Não manipule DOM em seus controllers, isso fará com que os controllers sejam mais dificeis para testar e violará a Separação de interesses. Use diretivas para isso.
+A nomenclatura do controller é dada pela sua funcionalidade (por exemplo shopping cart, homepage, admin panel) e o adicional Ctrl no final.
+Controllers são javascript puros construtores, serão nomeados através de UpperCamelCase (HomePageCtrl, ShoppingCartCtrl, AdminPanelCtrl, etc.).
+Os controladores não devem ser definidos como globais (embora o AngularJS permita isso, entretanto isso é uma má prática poluindo o namespace global).
+Use a sintaxe a seguir para definir controllers:
+
+function MyCtrl(dependency1, dependency2, ..., dependencyn) {
+  // ...
+}
+module.controller('MyCtrl', MyCtrl);
+A fim de evitar problemas com minificação, você pode gerar automaticamente a sintaxe de definição de array a partir de um padrão usando ferramentas como ng-annotate (e grunt task grunt-ng-annotate).
+
+Outra alternativa é usar o $inject:
+
+angular
+  .module('app')
+  .controller('Homepage', Homepage);
+
+Homepage.$inject = ['$log', '$http', 'ngRoute'];
+
+function Homepage($log, $http, ngRoute) {
+  // ...
+}
+Evite usar o serviço $scope para definir funções e propriedades como parte dos controllers. Use $scope somente se necessário:
+
+Para publicar e assinar eventos: $scope.$emit, $scope.$broadcast, e $scope.$on.
+Para valores ou coleções watch: $scope.$watch, $scope.$watchCollection
+Prefira usar a sintaxe controller as e capture com this usando a variavel:
+
+<div ng-controller="MainCtrl as main">
+   {{ main.things }}
+</div>
+app.controller('MainCtrl', MainCtrl);
+MainCtrl.$inject = ['$http'];
+
+function MainCtrl ($http) {
+  var vm = this;
+  //a clearer visual connection on how is defined on the view
+  vm.title = 'Some title';
+  vm.description = 'Some description';
+
+  $http.get('/api/main/things').then(function (response) {
+      vm.things = response.data.things; // Adding 'things' as a property of the controller
+  });
+}
+Evite usar a palavra-chave this repetidamente dentro do controller:
+
+  app.controller('MainCtrl', MainCtrl);
+  MainCtrl.$inject = ['$http'];
+
+  // Avoid
+  function MainCtrl ($http) {
+    this.title = 'Some title';
+    this.description = 'Some description';
+
+    $http.get('/api/main/things').then(function (response) {
+        // Warning! 'this' is in a different context here.
+        // The property will not be added as part of the controller context
+        this.things = response.data.things;
+    });
+  }
+É preferivel usar o nome da variavel pequena e consistente, por exemplo vm. Os principais beneficios de usar essa sintaxe:
+
+Cria um componente isolado - propriedades vinculadas não fazem parte da cadeia do $scope. Essa é uma boa prática apesar de alguns inconvenientes da herança do $scope (essa é provavelmente a razão pela qual ele foi removido no Angular 2):
+É difícil controlar a origem dos dados.
+Alterações de valor do escopo podem afetar a lugares que você não tinha a intenção de afetar.
+Refatorar torna-se mais complicado.
+A 'regra ponto'.
+Se estiver usando a sintaxe de definição de array, use os nomes originais das dependências do controller. Isso irá ajudá-lo a produzir um código mais legível:
+
+function MyCtrl(l, h) {
+  // ...
+}
+
+module.controller('MyCtrl', ['$log', '$http', MyCtrl]);
+que é menos legível do que:
+
+function MyCtrl($log, $http) {
+  // ...
+}
+
+module.controller('MyCtrl', ['$log', '$http', MyCtrl]);
+Isso se aplica especialmente para um arquivo que tem muito código que você precisa percorrer. Isto, eventualmente, pode causar que você esqueça qual variável está ligada a qual dependência..
+
+Faça controllers mais simples possível. Funções abstratas comumente usadas em um serviço.
+
+Evite escrever lógica de negócio dentro dos controllers. Dê essa responsabilidade para o model, usando um serviço. Por exemplo:
+
+//This is a common behaviour (bad example) of using business logic inside a controller.
+angular.module('Store', [])
+.controller('OrderCtrl', function () {
+  var vm = this;
+
+  vm.items = [];
+
+  vm.addToOrder = function (item) {
+    vm.items.push(item);//-->Business logic inside controller
+  };
+
+  vm.removeFromOrder = function (item) {
+    vm.items.splice(vm.items.indexOf(item), 1);//-->Business logic inside controller
+  };
+
+  vm.totalPrice = function () {
+    return vm.items.reduce(function (memo, item) {
+      return memo + (item.qty * item.price);//-->Business logic inside controller
+    }, 0);
+  };
+});
+Ao delegar a lógica de negócios em um 'model', o controller será parecido como este (veja 'use serviços como um model' para a implementação service-model):
+
+// order is used as a 'model'
+angular.module('Store', [])
+.controller('OrderCtrl', function (order) {
+  var vm = this;
+
+  vm.items = order.items;
+
+  vm.addToOrder = function (item) {
+    order.addToOrder(item);
+  };
+
+  vm.removeFromOrder = function (item) {
+    order.removeFromOrder(item);
+  };
+
+  vm.totalPrice = function () {
+    return order.total();
+  };
+});
+Por que lógica de negócios dentro de controllers é ruim?
+
+Controllers são instanciados para cada view e morre quando a view é descarregada
+Controllers não são reusaveis
+Controllers não são destinados a serem injetados
+Comunicar diferentes controllers usando invocação de metodo (possível que um filho queira se comunicar com o pai) ou os metódos $emit, $broadcast e $on. As mensagens emitidas e transmitidas devem ser mantidos a um mínimo.
+
+Faça uma lista de todas as mensagens que são passadas usando $emit, $broadcast e gerenciá-lo com cuidado devido a colisões de nomes e possíveis erros.
+
+Exemplo:
+
+// app.js
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+Custom events:
+ - 'authorization-message' - description of the message
+   - { user, role, action } - data format
+     - user - a string, which contains the username
+     - role - an ID of the role the user has
+     - action - specific action the user tries to perform
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+Quando você precisar formartar dados encapsulados a logica de formatação em um filter e declará-lo como dependência:
+
+function myFormat() {
+ return function () {
+   // ...
+ };
+}
+module.filter('myFormat', myFormat);
+
+function MyCtrl($scope, myFormatFilter) {
+ // ...
+}
+
+module.controller('MyCtrl', MyCtrl);
+Em caso de controllers aninhados usar o "escopo aninhado" (a sintaxe controllerAs ):
+
+app.js
+
+module.config(function ($routeProvider) {
+ $routeProvider
+   .when('/route', {
+     templateUrl: 'partials/template.html',
+     controller: 'HomeCtrl',
+     controllerAs: 'home'
+   });
+});
+HomeCtrl
+
+function HomeCtrl() {
+ var vm = this;
+
+ vm.bindingValue = 42;
+}
+template.html
+
+<div ng-bind="home.bindingValue"></div>
+Diretivas
+
+Nomeie suas diretivas no padrão lowerCamelCase
+Use scope ao invés de $scope na sua função de link. Na compilação, pós/pre funções link que você tenha, definem os argumentos que irão ser passados quando a função é invocada, você não será capaz de muda-los usando DI (injeção de dependências). Este modelo também é usado no código fonte do AngularJS.
+Use prefixos customizados para suas diretivas para previnir colisões de nomes com bibliotecas de terceiros.
+Não use ng ou ui prefixos pois eles estão reservados para o uso do AngularJS e AngularJS UI.
+Manipulações DOM devem ser feitas somente através de diretivas.
+Crie um escopo isolado/independente quando você for desenvolver componentes reutilizáveis.
+Use diretivas como atributos ou elementos ao invés de comentários ou classes, isso irá fazer seu codigo mais legivel.
+Use scope.$on('$destroy', fn) para limpar. Isso é especialmente útil quando você está gerenciando plugins de terceiros como diretivas.
+Não esqueça de usar $sce quando você deve lidar com conteúdo não confiável.
+Filtros
+
+Nomeie seus filtros no padrão lowerCamelCase
+Faça seus filtros o mais leve possível. Eles são chamados frequentemente durante o loop $digest então criando filtros lentos você irá atrasar sua aplicação.
+Faça uma única coisa em seus filtros, mantê-los coerente. Muitas manipulações complexas podem ser alcançadas através de filtros existentes.
+Serviços
+
+Esta seção inclui informações sobre o componentes de serviços no AngularJS. Ele não é dependente do modo de definição (isto é, como provedor, .factory, .service), exceto se explicitamente mencionado.
+
+Use camelCase para nomear os serviços.
+
+UpperCamelCase (PascalCase) para nomear seus serviços, usado como construtor das funções, ex.:
+
+function MainCtrl(User) {
+    var vm = this;
+    vm.user = new User('foo', 42);
+}
+
+module.controller('MainCtrl', MainCtrl);
+
+function User(name, age) {
+  this.name = name;
+  this.age = age;
+}
+
+module.factory('User', function () {
+  return User;
+});
+lowerCamelCase para todos os outros serviços.
+
+Encapsule as lógicas de negócios em serviços. Prefira usar-lo em seu model. Por exemplo:
+
+// order is the 'model'
+angular.module('Store')
+.factory('order', function () {
+    var add = function (item) {
+      this.items.push (item);
+    };
+
+    var remove = function (item) {
+      if (this.items.indexOf(item) > -1) {
+        this.items.splice(this.items.indexOf(item), 1);
+      }
+    };
+
+    var total = function () {
+      return this.items.reduce(function (memo, item) {
+        return memo + (item.qty * item.price);
+      }, 0);
+    };
+
+    return {
+      items: [],
+      addToOrder: add,
+      removeFromOrder: remove,
+      totalPrice: total
+    };
+});
+Veja 'Evite escrever lógica de negócio dentro dos controllers' para um exemplo de um controlador consumindo o serviço.
+
+Serviços que representam o domínio de preferência um service em vez de um factory. Desta forma, podemos tirar proveito da herança "klassical" mais fácil:
+
+function Human() {
+  //body
+}
+Human.prototype.talk = function () {
+  return "I'm talking";
+};
+
+function Developer() {
+  //body
+}
+Developer.prototype = Object.create(Human.prototype);
+Developer.prototype.code = function () {
+  return "I'm coding";
+};
+
+myModule.service('human', Human);
+myModule.service('developer', Developer);
+Para o cache de nível de sessão você pode usar $cacheFactory. Isso deve ser usado para armazenar em cache os resultados de solicitações ou cálculos pesados.
+
+Se determinado serviço requer configuração para definir o serviço de provedor, configure com config callback:
+
+angular.module('demo', [])
+.config(function ($provide) {
+  $provide.provider('sample', function () {
+    var foo = 42;
+    return {
+      setFoo: function (f) {
+        foo = f;
+      },
+      $get: function () {
+        return {
+          foo: foo
+        };
+      }
+    };
+  });
+});
+
+var demo = angular.module('demo');
+
+demo.config(function (sampleProvider) {
+  sampleProvider.setFoo(41);
+});
+Templates
+
+Use ng-bind ou ng-cloak ao invés de simplesmente {{ }} para prevenir conteúdo piscando.
+Evite escrever código complexo no template.
+Quando você precisar definir o src de uma imagem dinamicamente use ng-src ao invés do template {{}}.
+Quando você precisar definir o href como tag dinamica use ng-href ao invés de href com o template {{ }}.
+Ao invés de usar variável de escopo como string e usá-la com o atributo estilo {{ }}, use a diretiva ng-style com parâmetros de objeto e variavéis de escopo como valores:
+    <div ng-controller="MainCtrl as main">
+        <div ng-style="main.divStyle">my beautifully styled div which will work in IE</div>;
+    </div>
+  angular
+    .module('app')
+    .controller('MainCtrl', MainCtrl);
+
+  MainCtrl.$inject = [];
+
+  function MainCtrl() {
+    var vm = this;
+    vm.divStyle = {
+        width: 200,
+        position: 'relative'
+    };
+  }
+Roteamento
+
+Use resolve para solucionar as dependências antes que o 'view' seja mostrado.
+Não coloque chamadas RESTful explícitas dentro do callback do resolve. Isolar todos os pedidos dentro de serviços adequados. Desta forma, você pode habilitar o cache e separar os interesses.
+E2E Testing
+
+E2E tests são o próximo passo senso comum após os testes unitários, que lhe permitirá rastrear bugs e erros no comportamento do seu sistema. Eles são ótimos para fornecer uma verificação de bus que os cenários mais comuns de usar o aplicativo. Desta forma, você pode automatizar o processo e executá-lo antes de implantar seu aplicativo.
+
+Idealmente , os testes com o Angular são escritos em Jasmine. Estes testes são executados usando o corredor de teste transferidor E2E que usa eventos nativos e têm características especiais para aplicações com o angular.
+
+Estrutura de arquivos:
+
+.
+├── app
+│   ├── app.js
+│   ├── home
+│   │   ├── home.html
+│   │   ├── controllers
+│   │   │   ├── FirstCtrl.js
+│   │   │   ├── FirstCtrl.spec.js
+│   │   ├── directives
+│   │   │   └── directive1.js
+│   │   │   └── directive1.spec.js
+│   │   ├── filters
+│   │   │   ├── filter1.js
+│   │   │   └── filter1.spec.js
+│   │   └── services
+│   │       ├── service1.js
+│   │       └── service1.spec.js
+│   └── about
+│       ├── about.html
+│       ├── controllers
+│       │   └── ThirdCtrl.js
+│       │   └── ThirdCtrl.spec.js
+│       └── directives
+│           ├── directive2.js
+│           └── directive2.spec.js
+├── partials
+├── lib
+└── e2e-tests
+    ├── protractor.conf.js
+    └── specs
+        ├── home.js
+        └── about.js
+i18n
+
+Para novas versões do framework (>=1.4.0) use o build com ferramentas de i18n tools, se você usar versões mais antigas (<1.4.0) use angular-translate.
+Performance
+
+Otimizar o ciclo de digest
+
+Assista apenas as variáveis ​​mais importantes . Quando necessário para invocar o loop digest $ explicitamente (que deve acontecer apenas em casos excepcionais ) , invocá-lo somente quando necessário (por exemplo : quando se usa comunicação em tempo real , não causam um $ circuito digest em cada um recebeu mensagem).
+
+Para o conteúdo que é inicializada apenas uma vez e , em seguida, nunca mudou , use os observadores de utilização única como bindonce para versões mais antigas do AngularJS ou ligações de uma só vez em AngularJS > = 1.3.0 .
+
+Assista somente as variáveis mais importantes. Quando necessário invocar o $digest loop explicitamente (que deve acontecer apenas em casos excepcionais), invoque somente quando necessário (por exemplo: quando você usar comunicação em tempo real, não tem impacto no $digest a cada mensagem recebida).
+
+Para o conteúdo que é inicializado apenas uma vez, e em seguida, nunca sofre alteração, use os single-time watchers como bindonce, e, para versões mais antigas do AngularJS ou one-time binding com AngularJS >=1.3.0. html <div> {{ ::main.things }} </div>  or html <div ng-bind="::main.things"></div>  Depois disso, os watchers não serão criados pelo main.things e quaisquer alterações do main.things não irá atualizar a view.
+Faça os cálculos em $watch mais simples possível. Fazendo cálculos pesados e lentos em um único $watch fará o aplicativo ficar lento (o loop $digest é feito em único segmento por causa da natureza single-threaded do Javascript).
+Ao assistir coleções, não vê-las profundamente quando não for necessário. Melhor usar $watchCollection, que executa uma verificação superficial para a igualdade do resultado da expressão observada e o valor anterior da avaliação da expressão.
+Defina o terceiro parâmetro $timeout na função para false ignorando o loop $digest quando há variáveis observadas são impactadas pela a invocação do retorno do $timeout.
+Ao lidar com grandes coleções que mudam raramente, use estruturas de dados imutáveis.
+Considere diminiuir o número de solicitações de rede através do agrupamento / arquivos de modelo de html cache em seu principal arquivo de javascript, usando o grunt-html2js / gulp-html2js. Veja aqui e aqui para maiores detalhes. Isso é particularmente útil quando o projeto tem um monte de pequenos templates HTML que podem ser uma parte do principal (minificado e compactado) do arquivo javascript.
+
+Contribuições
+
+Como o objetivo deste guia é para ser conduzido pela a comunidade, as contribuições são muito bem vindas. Por exemplo, você pode contribuir através da seção de Testes ou através da tradução para o seu idioma.
